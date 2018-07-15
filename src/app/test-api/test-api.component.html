@@ -1,0 +1,21 @@
+<div fxLayout="column" style="margin-top: 50px; padding: 10px; border: 0.5px solid rgb(173, 173, 173)">
+  <h3>Check API access</h3>
+  <button mat-raised-button color="accent" (click)="checkAPI()">Check API access</button>
+  <p>{{ responseCheck }}</p>
+</div>
+<div fxLayout="column" style="margin-top: 50px; padding: 10px; border: 0.5px solid rgb(173, 173, 173)">
+  <h3>Check API upload access</h3>
+  <input hidden type="file" #imgFileInput (change)="selectedFile($event)"/>
+  <div fxFlex style='width: 100%'>
+    <mat-form-field class="upload-input" style="width: 51%">
+        <input type="text" matInput placeholder="Please select a file" disabled='true' [value]='fileName' required>
+    </mat-form-field>
+    <button  type="button" style="margin-left: 5px; margin-right: 5px; width: 20%; border: 1px solid" mat-button color="accent" (click)="imgFileInput.click()">
+      Select file
+    </button>
+    <button style="width: 25%; border: 1px solid" type="button" mat-button color="primary" (click)="postFile()">
+      Load file
+    </button>
+  </div>
+  <mat-progress-bar style='margin-top: 15px;' mode="determinate" [value]="progress"></mat-progress-bar>
+</div>

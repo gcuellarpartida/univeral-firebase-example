@@ -1,0 +1,35 @@
+<mat-card>
+  <mat-card-title color="primary" style="text-align: center">Signup or Login</mat-card-title>
+    <form  fxLayout="column" fxLayoutGap="5px" fxLayoutAlign="center center" #f="ngForm">
+      <mat-form-field style="width: 100%">
+        <input 
+        matInput 
+        type="email" 
+        placeholder="Email" 
+        ngModel 
+        name="email"
+        email
+        required
+        #emailInput="ngModel">
+        <mat-error>Email not valid.</mat-error>
+      </mat-form-field>  
+      <mat-form-field style="width: 100%">
+        <input 
+        matInput 
+        type="password" 
+        placeholder="Password" 
+        ngModel 
+        name="password"
+        required
+        minlength="6"
+        #pwInput="ngModel">
+        <mat-error>Password should be at least 6 characters.</mat-error>
+      </mat-form-field>
+      <div fxFlexAlign="center center" style='width: 100%' fxLayoutGap='10px'>
+        <button fxFlex class="long-button" *ngIf="!isLoading" type="button" mat-raised-button color="primary" (click)="onLogin(f)" [disabled]="f.invalid">Login</button>  
+        <button fxFlex class="long-button" *ngIf="!isLoading" type="button" mat-raised-button color="primary" (click)="onSignUp(f)" [disabled]="f.invalid">Sign Up</button>
+        <button fxFlex class="long-button" *ngIf="!isLoading" type="button" mat-raised-button color="warn" (click)="onLogout()">Logout</button>
+      </div>
+      <mat-spinner *ngIf="isLoading"></mat-spinner>
+    </form>
+</mat-card>

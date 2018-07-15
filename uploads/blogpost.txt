@@ -1,0 +1,47 @@
+<p>I made an application (<a href="https://amino.researchtools.cloud">https://amino.researchtools.cloud</a>) to help document my research. After using it for a few months I decided to make it public and share it with some friends  who maybe could find it useful as well. </p>
+<p>Soon after, I decided to make it public and for that I needed to index it in google. I previously read that  google bots were good enough to crawl single page applications. In this case, the application was written in Angular 5 so thought was going to be a breeze to index it.</p>
+<p>After signing into the google search console, the very first thing I did was to check if the crawler could fetch and render the page correctly. 
+<h2>Problem 1: Status: Not Found</h2>
+<p>This was the first problem I encountered. The google crawler could fetch and render the main page correctly; however, trying to fetch and render any other page was leading to a not found status.
+The website was stored on AWS in an S3 bucket and I was using Cloudfront for content felivery and Route53 as DNS service. It took me the better part of a weekend to find out what was going on, 
+the origin was pointing to the webpage url from the S3 bucket e.g. "bucketname.s3-website-ap-southeast-2.amazonaws.com", and the not found 404 error page was made to redirect to index.html as indicated in most tutorials.
+However, I still was getting the same error when fetching as google: "not found".
+<h2>Solution:</h2>
+<p><b>I went into cloudfront -> Error Pages and added another redirect "403 Forbidden error" to redirect also to /index.html and return a "200 Ok" response</b>. After doing this, finally fetch and render worked for the rest of the pages.
+<h2>Problem 2: Page rendering incompletely</h2>
+<p>This let to another few more painful hours. Each of the pages redered partially, some not showing the images, some not showing the forms, or not showing the text. At the beggining I thought was the database problem that was not retrieving the data fast enough or maybe that the asynchronous code was causing the error.
+I first removed each call to the database without any luck. Then, I started to remove each of the dependencies. 
+<h2>Solution: Check your code and the dependencies</h2>
+<p>Although to date I still don't know exactly why, the following dependencies were causing the problem:</p>
+<div class="cc"><pre><code>ng-circle-progress
+angular-font-awesome
+ts-node #Some versions</code></pre></div>
+<p>Now I have my package.json that I know won't fail me:
+<div class="cc"><pre><code>  "dependencies": {
+    "@angular/animations": "^5.2.0",
+    "@angular/cdk": "^5.0.4",
+    "@angular/common": "^5.2.0",
+    "@angular/compiler": "^5.2.0",
+    "@angular/core": "^5.2.0",
+    "@angular/flex-layout": "^2.0.0-beta.10-4905443",
+    "@angular/forms": "^5.2.0",
+    "@angular/http": "^5.2.0",
+    "@angular/material": "^5.0.4",
+    "@angular/platform-browser": "^5.2.0",
+    "@angular/platform-browser-dynamic": "^5.2.0",
+    "@angular/router": "^5.2.0",
+    "@firebase/app": "^0.2.0",
+    "angularfire2": "^5.0.0-rc.5-next",
+    "chart.js": "^2.7.2",
+    "core-js": "^2.4.1",
+    "firebase": "^4.12.0",
+    "hammerjs": "^2.0.8",
+    "ng2-charts": "^1.6.0",
+    "ngx-highlight-js": "^2.0.3",
+    "ngx-highlightjs": "^2.1.1",
+    "rxjs": "^5.5.6",
+    "ts-node": "^6.0.5",
+    "zone.js": "^0.8.19"
+  }</code></pre></div>
+<p>Finally, among other issues hampering the fetch as google I found that having nested promises is very bad idea. Getting rid of these solve the rest of the few extra issues.</p>
+<h3>Take away message: Trust Google crawler, I was about to use Angular Universal myself to pre-render on server, killing my whole serveless webpage. Gladly I did not and went debugging each part from the delivery service to the code. The problem is always between the chair and the computer.
